@@ -1,4 +1,23 @@
-# Voice Finance Free v0.6
+# WebGL Glass Bar
+
+Independent copy of Voice Finance. The main app and Liquid Studio are not modified.
+
+- Repository: https://github.com/dimasdont-lab/WEBGL_glass_bar
+- Run locally: `node dev-server.cjs`, then open http://localhost:8777
+- Tests: `node --test tests/glass-bar.test.cjs`
+- Reference: `reference/claude-tabbar.html` (the exact user-supplied file).
+- The old dock, compact state, quick-entry row and CSS indicator are removed.
+- New bar: reference WebGL edge refraction, specular lighting, jelly spring, five buttons and draggable indicator.
+- Finance pages remain native HTML. Cached HTML textures refresh on data changes; native scrolling repositions them every frame. First-time page snapshots are asynchronous, not a native compositor capture of arbitrary browser pixels.
+- Transaction and phrase entry are available on Home. Local finance storage and service-worker caches have a separate namespace from the main app.
+- WebGL-unavailable devices keep usable navigation with a clearly distinct CSS fallback.
+- Browser checks cover navigation, rapid retargeting, drag, native scroll, settings layering and transaction persistence. Actual iPhone Safari testing remains required.
+
+## Historical Voice Finance handoff
+
+The following notes describe the copied app before dock replacement; old repository destinations and dock instructions do not apply here.
+
+## Voice Finance Free v0.6
 
 Повністю безплатний тестовий веб-застосунок без платних AI API.
 

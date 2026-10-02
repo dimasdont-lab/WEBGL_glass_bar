@@ -1,7 +1,7 @@
 {
-  "name": "Voice Finance Free",
-  "short_name": "Voice Finance",
-  "start_url": "./?v=25",
+  "name": "WebGL Glass Bar",
+  "short_name": "WebGL Glass",
+  "start_url": "./?v=1",
   "id": "./",
   "scope": "./",
   "display": "standalone",

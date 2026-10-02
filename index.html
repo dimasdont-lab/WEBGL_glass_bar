@@ -6,9 +6,10 @@
   <meta name="theme-color" content="#050505" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="voice-finance-api" content="" />
-  <title>Voice Finance</title>
+  <meta name="webgl-glass-bar-api" content="" />
+  <title>WebGL Glass Bar · Voice Finance</title>
   <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="glass-bar.css">
   <style>
     :root{
       --bg:#050505;
@@ -38,7 +39,7 @@
       max-width:480px;
       margin:0 auto;
       min-height:100dvh;
-      padding:calc(env(safe-area-inset-top) + 77px) 18px calc(190px + env(safe-area-inset-bottom));
+      padding:calc(env(safe-area-inset-top) + 77px) 18px calc(116px + env(safe-area-inset-bottom));
       background:#050505;transition:transform .46s cubic-bezier(.2,.8,.2,1),filter .46s ease;
     }
     .account-ticker{position:fixed;z-index:42;top:env(safe-area-inset-top);left:0;right:0;height:74px;overflow:hidden;background:rgba(5,5,5,.94);border-bottom:1px solid rgba(255,255,255,.06);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);touch-action:pan-y;cursor:grab}.account-ticker.dragging{cursor:grabbing}.account-ticker.dragging .ticker-item{pointer-events:none}
@@ -91,19 +92,7 @@
     .tx-title{font-size:16px}.tx-meta{font-size:13px;color:var(--muted);margin-top:3px}
     .tx-amount{font-size:17px;font-variant-numeric:tabular-nums}.pos{color:var(--green)}.neg{color:#f0f0f4}
     .empty{padding:28px;text-align:center;color:var(--muted)}
-    .bottom-zone{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(480px,100%);padding:8px 15px calc(11px + env(safe-area-inset-bottom));background:linear-gradient(0deg,#050505 0 48%,transparent);z-index:30;transition:transform .5s cubic-bezier(.22,.82,.22,1),bottom .22s ease}
-    .dock-layout{position:relative;height:128px;transition:height .364s cubic-bezier(.22,.72,.18,1)}
-    .quick-entry-shell{position:absolute;z-index:3;left:0;top:0;width:100%;height:42px;border:1px solid rgba(255,255,255,.16);border-radius:21px;background:rgba(31,31,33,.94);box-shadow:inset 0 1px rgba(255,255,255,.12);display:flex;align-items:center;padding:0 18px;transition:top .364s cubic-bezier(.65,0,.35,1),left .476s cubic-bezier(.65,0,.35,1) .252s,width .476s cubic-bezier(.65,0,.35,1) .252s,height .476s cubic-bezier(.65,0,.35,1) .252s,border-radius .476s cubic-bezier(.65,0,.35,1) .252s,padding .476s cubic-bezier(.65,0,.35,1) .252s,opacity .35s ease;overflow:hidden}
-    .quick-entry-shell>svg{width:22px;height:22px;flex:none;color:#f5f5f7}.quick-entry-shell.listening{border-color:rgba(255,64,96,.6)}.quick-entry-input{min-width:0;flex:1;height:100%;border:0;outline:0;background:transparent;color:#f5f5f7;padding:0 9px 0 11px;font-size:16px}.quick-entry-input::placeholder{color:#8d8d94}.quick-send{width:27px;height:27px;flex:none;border:0;border-radius:50%;background:#ff4060;color:#fff;display:grid;place-items:center;padding:0;transition:transform .18s ease,filter .18s ease}.quick-send:active{transform:scale(.9);filter:brightness(.82)}.quick-send svg{width:14px;height:14px}
-    .dock{position:absolute;left:0;top:50px;width:100%;height:78px;transition:top .784s cubic-bezier(.22,.72,.18,1),height .784s cubic-bezier(.22,.72,.18,1)}
-    .dock-group{position:relative;isolation:isolate;width:100%;height:78px;border:1px solid rgba(255,255,255,.16);border-radius:39px;background:rgba(31,31,33,.94);box-shadow:inset 0 1px rgba(255,255,255,.12);overflow:hidden;transition:height .784s cubic-bezier(.22,.72,.18,1),border-color .784s ease,background-color .784s ease,box-shadow .784s ease}.dock-group::before{content:"";position:absolute;z-index:0;right:0;top:7px;width:124px;height:64px;border-radius:32px;background:rgba(31,31,33,.96);border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1px rgba(255,255,255,.12);opacity:0;transform:scaleX(.7);transform-origin:right center;transition:opacity .45s ease,transform .784s cubic-bezier(.22,.72,.18,1)}
     .profile-drawer::before{content:"";position:absolute;pointer-events:none;inset:1px;border-radius:inherit;background:linear-gradient(100deg,rgba(255,255,255,.07),transparent 18% 82%,rgba(255,255,255,.055));opacity:.5}
-    .dock-group::after{content:"";position:absolute;pointer-events:none;inset:0;border-radius:inherit;padding:12px;background:rgba(255,255,255,.001);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;backdrop-filter:blur(.75px) contrast(112%);backdrop-filter:url(#glassRefraction) blur(.75px) contrast(112%);-webkit-backdrop-filter:blur(.75px) contrast(112%);-webkit-backdrop-filter:url(#glassRefraction) blur(.75px) contrast(112%)}
-    .dock-indicator{position:absolute;z-index:0;left:6px;top:6px;width:calc((100% - 12px)/5);height:64px;border-radius:31px;transform:translateX(0);will-change:transform,width,height,left,top;transition:left .8s cubic-bezier(.65,0,.35,1),top .8s cubic-bezier(.65,0,.35,1),width .8s cubic-bezier(.65,0,.35,1),height .8s cubic-bezier(.65,0,.35,1),border-radius .8s cubic-bezier(.65,0,.35,1)}.dock-indicator::before{content:"";position:absolute;inset:0;border-radius:inherit;background:#09090a;transform-origin:center}
-    .dock-indicator.moving{animation:dockIndicatorMove .5s cubic-bezier(.65,0,.35,1) both}.dock-indicator.moving::before{animation:dockIndicatorSqueeze .5s ease-in-out both}@keyframes dockIndicatorMove{from{transform:translateX(var(--indicator-from))}to{transform:translateX(var(--indicator-to))}}@keyframes dockIndicatorSqueeze{0%,100%{transform:scaleY(1)}50%{transform:scaleY(var(--indicator-squeeze))}}
-    .dock button{border:0;color:#f1f1f3}.dock-group button{--i:0;position:absolute;z-index:1;left:6px;top:6px;width:calc((100% - 12px)/5);height:64px;border-radius:31px;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;padding:5px 2px;transform:translateX(calc(var(--i) * 100%));transition:transform .8s cubic-bezier(.22,.72,.18,1),opacity .55s ease,color .35s ease,width .8s cubic-bezier(.22,.72,.18,1),height .8s cubic-bezier(.22,.72,.18,1),top .8s cubic-bezier(.22,.72,.18,1),left .8s cubic-bezier(.22,.72,.18,1)}.dock-group button:nth-of-type(2){--i:1}.dock-group button:nth-of-type(3){--i:2}.dock-group button:nth-of-type(4){--i:3}.dock-group button:nth-of-type(5){--i:4}.dock-group button.active{color:#ff4060}.dock-group button:active{filter:brightness(.82)}.dock svg{width:25px;height:25px}.dock-label{font-size:10px;line-height:1;white-space:nowrap;letter-spacing:-.1px;transition:opacity .35s ease}
-    .bottom-zone.compact .dock-layout{height:78px}.bottom-zone.compact .quick-entry-shell{left:68px;top:9px;width:calc(100% - 200px);height:60px;border-radius:30px;padding:0 9px 0 14px}.bottom-zone.compact.compact-home .quick-entry-shell{left:0;width:calc(100% - 132px)}.bottom-zone.compact .dock{top:0;height:78px}.bottom-zone.compact .dock-group{height:78px;border-color:transparent;background:transparent;box-shadow:none;overflow:visible}.bottom-zone.compact .dock-group::before{opacity:1;transform:scaleX(1)}.bottom-zone.compact .dock-group::after{opacity:0}.bottom-zone.compact .dock-indicator{left:0;top:7px;width:64px;height:64px;border-radius:50%;transform:translateX(0)!important;border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1px rgba(255,255,255,.12)}.bottom-zone.compact.compact-home .dock-indicator{opacity:0}.bottom-zone.compact .dock-indicator::before{background:rgba(31,31,33,.96)}.bottom-zone.compact .dock-group button{left:0;top:7px;width:64px;height:64px;border-radius:50%;transform:translateX(0) scale(.72);opacity:0;pointer-events:none}.bottom-zone.compact .dock-group button.active:not([data-screen="home"]){transform:translateX(0) scale(1);opacity:1;pointer-events:auto}.bottom-zone.compact .dock-group button[data-screen="home"]{left:calc(100% - 124px);transform:translateX(0) scale(1);opacity:1;pointer-events:auto}.bottom-zone.compact .dock-group button[data-screen="home"].active{background:#09090a}.bottom-zone.compact .dock-group .more-btn{left:calc(100% - 62px);transform:translateX(0) scale(1);opacity:1;pointer-events:auto;background:transparent;border:0;box-shadow:none}.bottom-zone.compact .dock-label{opacity:0}.bottom-zone.compact .quick-entry-shell>svg{width:0;opacity:0}.bottom-zone.compact .quick-send{width:38px;height:38px}.bottom-zone.compact .quick-send svg{width:19px;height:19px}
-    .dock-indicator{transition-duration:.784s}.dock-group button{transition-duration:.784s,.546s,.35s,.784s,.784s,.784s,.784s}.dock-label{transition-duration:.35s}.bottom-zone.compact .dock-layout{transition:height .476s cubic-bezier(.22,.72,.18,1)}.bottom-zone.compact .quick-entry-shell{transition:top .476s cubic-bezier(.65,0,.35,1),left .476s cubic-bezier(.65,0,.35,1),width .476s cubic-bezier(.65,0,.35,1),height .476s cubic-bezier(.65,0,.35,1),border-radius .476s cubic-bezier(.65,0,.35,1),padding .476s cubic-bezier(.65,0,.35,1),opacity .35s ease}
     .topline{padding-left:0}.page-search{height:41px;margin:0 0 18px;border:1px solid rgba(255,255,255,.1);border-radius:21px;background:#1c1c1e;display:flex;align-items:center;padding:0 16px}.page-search svg{width:20px;height:20px;flex:none}.page-search input{width:100%;height:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--text);padding:0 12px;font-size:17px}.page-search input::placeholder{color:#77777f}
     .home-topline{min-height:72px;align-items:flex-start}.home-topline h1{font-size:31px;margin-bottom:7px}.home-topline .sub{margin:0;font-size:16px;text-transform:capitalize}
     .profile-drawer-backdrop{position:fixed;inset:0;z-index:29;background:rgba(0,0,0,0);pointer-events:none;transition:background .46s ease}
@@ -111,9 +100,7 @@
     .profile-drawer{position:absolute;isolation:isolate;z-index:2;right:0;top:0;bottom:0;width:min(76vw,360px);height:100%;padding:calc(env(safe-area-inset-top) + 28px) 16px calc(env(safe-area-inset-bottom) + 132px);background:linear-gradient(110deg,rgba(31,31,36,.48),rgba(12,12,15,.28) 48%,rgba(35,35,41,.34));border-left:1px solid rgba(255,255,255,.18);border-radius:30px 0 0 30px;box-shadow:-26px 0 70px rgba(0,0,0,.34),inset 8px 0 24px rgba(255,255,255,.025);backdrop-filter:blur(15px) saturate(145%);-webkit-backdrop-filter:blur(15px) saturate(145%);overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;transform:translateX(104%);transition:transform .4s cubic-bezier(.22,.9,.28,1)}
     .profile-drawer::before{position:fixed;inset:1px 0 1px 1px;border-radius:29px 0 0 29px;background:radial-gradient(ellipse at 12% 45%,rgba(255,255,255,.14),transparent 18%),linear-gradient(92deg,rgba(255,255,255,.1),transparent 9% 88%,rgba(255,255,255,.025));filter:saturate(130%);opacity:.58}
     .profile-drawer-backdrop.open .profile-drawer{transform:translateX(0)}
-    body.drawer-open .bottom-zone{pointer-events:none}body.drawer-open .more-btn{pointer-events:auto}
     body.drawer-open .app{transform:translateX(calc(-1 * min(22vw,105px)));filter:brightness(.72)}
-    body.drawer-open .bottom-zone{z-index:52}body.drawer-open .quick-entry-shell,body.drawer-open .dock-indicator,body.drawer-open .bottom-zone .dock-group button:not(.more-btn){opacity:0!important;pointer-events:none!important;transform:scale(.72)!important}body.drawer-open .dock-group{background:transparent;border-color:transparent;box-shadow:none}body.drawer-open .dock-group::before,body.drawer-open .dock-group::after{opacity:0!important;transform:scale(.7)!important}.more-btn .more-icon,.more-btn .back-icon{position:absolute;left:50%;top:13px;width:25px;height:25px;transform:translateX(-50%);transition:opacity .25s ease,transform .3s cubic-bezier(.65,0,.35,1)}.more-btn .back-icon{opacity:0;transform:translateX(-50%) scale(.65) rotate(-24deg)}.more-btn .dock-label{position:absolute;left:50%;bottom:8px;transform:translateX(-50%)}body.drawer-open .bottom-zone .dock-group .more-btn{left:calc(100% - 64px);top:7px;width:64px;height:64px;border-radius:50%;opacity:1;pointer-events:auto;transform:none;background:#1d1d20;border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1px rgba(255,255,255,.1)}body.drawer-open .more-btn .more-icon{opacity:0;transform:translateX(-50%) scale(.65) rotate(24deg)}body.drawer-open .more-btn .back-icon{opacity:1;transform:translateX(-50%) scale(1) rotate(0)}body.drawer-open .more-btn .dock-label{font-size:0}body.drawer-open .more-btn .dock-label::after{content:"Назад";font-size:10px}.bottom-zone.compact .more-btn .more-icon,.bottom-zone.compact .more-btn .back-icon{top:16px}
     .drawer-title{font-size:28px;margin:0 0 5px}.drawer-sub{color:var(--muted);font-size:13px;margin-bottom:22px}.drawer-section-head{display:flex;align-items:center;justify-content:space-between;margin:18px 3px 10px}.drawer-section-head h2{font-size:18px;margin:0}.drawer-section-head button{border:0;background:transparent;color:var(--muted);padding:5px}.drawer-settings{width:100%;margin-top:16px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.045);padding:15px;display:flex;justify-content:space-between;align-items:center;text-align:left}.profile-drawer .category-grid{border-radius:24px}.profile-drawer .category{grid-template-columns:39px minmax(0,1fr) auto;padding-inline:9px}.profile-drawer .cat-icon{width:34px;height:34px}.profile-drawer .cat-name,.profile-drawer .cat-sum{font-size:14px}
     .person-status{font-size:12px;font-weight:650}.person-status.paid{color:var(--green)}.person-status.unpaid{color:var(--accent-strong)}.person-back{border:0;background:transparent;color:var(--muted);padding:5px 0 15px;font-size:15px}.person-summary{margin-bottom:14px}.person-list .tx{grid-template-columns:42px minmax(0,1fr) auto}.person-list .debt-amount{grid-row:1 / span 2;grid-column:3;align-self:center}
     .market-picker{margin-top:18px}.market-search{height:48px;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.045);padding:0 15px;color:var(--text);width:100%;outline:0}.market-list{max-height:290px;overflow:auto;margin-top:10px;border:1px solid var(--line);border-radius:20px}.market-option{display:flex;align-items:center;gap:11px;padding:12px 14px;border-bottom:1px solid var(--line)}.market-option:last-child{border-bottom:0}.market-option input{accent-color:#ff4060}.market-option small{margin-left:auto;color:var(--muted)}.data-note{font-size:12px;color:var(--muted);line-height:1.45;margin-top:10px}.empty-chart{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--muted);padding:28px}.detail-title{margin:2px 0 18px}.detail-title h1{font-size:30px}.account-picker{margin:0 0 14px}.account-picker select{width:100%;height:48px;border:1px solid var(--line);border-radius:18px;background:var(--panel);color:var(--text);padding:0 14px}
@@ -156,8 +143,6 @@
     .tiny{font-size:12px;color:var(--muted)}
     .provider-list{display:grid;gap:9px}.provider-button{width:100%;border:1px solid var(--line);background:#121215;border-radius:18px;padding:14px 15px;display:flex;align-items:center;justify-content:space-between;text-align:left}.provider-note{font-size:12px;color:var(--muted)}.analysis-head{margin-bottom:16px}.analysis-value{font-size:43px;font-weight:650;letter-spacing:-1.8px}.analysis-change{margin-top:6px;font-size:16px}.period-tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;background:#111114;border:1px solid var(--line);border-radius:17px;padding:4px;margin-bottom:14px}.period-tabs button{border:0;background:transparent;color:var(--muted);font-size:12px;padding:8px 2px;border-radius:13px}.period-tabs button.active{background:#29292e;color:white}.analysis-chart{height:260px;border-bottom:1px solid var(--line);position:relative;touch-action:none;margin-bottom:18px}.analysis-chart svg{width:100%;height:100%;overflow:visible}.chart-tooltip{position:absolute;top:10px;left:10px;background:rgba(20,20,23,.92);border:1px solid var(--line);border-radius:12px;padding:7px 9px;font-size:12px;pointer-events:none}.chart-crosshair{stroke:rgba(255,255,255,.35);stroke-width:1;stroke-dasharray:3 3}.metrics-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:24px;overflow:hidden;margin-bottom:18px}.metric-row{padding:13px;border-bottom:1px solid var(--line)}.metric-row:nth-child(odd){border-right:1px solid var(--line)}.metric-row:nth-last-child(-n+2){border-bottom:0}.metric-row small{display:block;color:var(--muted);margin-bottom:4px}.back-button{border:0;background:transparent;color:var(--muted);padding:4px 0 16px;font-size:15px}.market-detail-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}.market-detail-meta .card{padding:16px}.market-detail-meta small{display:block;color:var(--muted);margin-bottom:6px}.market-source{font-size:12px;color:var(--muted);line-height:1.45}
     .voice-popover{position:fixed;isolation:isolate;left:50%;transform:translateX(-50%);bottom:calc(108px + env(safe-area-inset-bottom));width:min(440px,calc(100% - 28px));z-index:55;display:none;background:linear-gradient(145deg,rgba(38,38,44,.5),rgba(12,12,15,.3) 48%,rgba(36,36,42,.36));border:1px solid rgba(255,255,255,.18);border-radius:26px;padding:16px;box-shadow:0 18px 70px rgba(0,0,0,.48),inset 0 2px 10px rgba(255,255,255,.035);backdrop-filter:blur(15px) saturate(145%);-webkit-backdrop-filter:blur(15px) saturate(145%);transition:bottom .18s ease}
-    body.keyboard-open .bottom-zone{opacity:0;pointer-events:none;transform:translate(-50%,28px);transition:opacity .16s ease,transform .2s ease}
-    body.sheet-open .bottom-zone{opacity:0;pointer-events:none;transform:translate(-50%,28px)}
     .voice-popover.open{display:block}.voice-popover .parse-card{margin-top:12px;padding:13px;border-radius:20px}.voice-popover .parse-amount{font-size:24px}.voice-popover-head{display:flex;gap:12px;align-items:flex-start}.voice-live-dot{width:11px;height:11px;border-radius:50%;background:var(--accent);margin-top:6px;flex:none}.voice-live-dot.pulse{animation:pulse 1.35s infinite}.voice-copy{min-width:0;flex:1}.voice-popover .voice-status{font-size:16px;margin:0 0 4px}.voice-popover .voice-text{font-size:14px;min-height:0;max-height:70px;overflow:auto}.voice-close{border:0;background:transparent;color:var(--muted);font-size:22px;padding:0 2px}.voice-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.voice-actions button{margin-top:8px}.voice-engine-note{margin-top:8px}
     .debt-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}.debt-total{padding:17px;border:1px solid var(--line);border-radius:24px;background:var(--panel);text-align:left;color:var(--text);cursor:pointer}.debt-total:active{transform:scale(.985)}.debt-total strong{display:block;font-size:22px;margin-top:5px}.debt-row{cursor:pointer}.debt-person{font-size:16px}.debt-note{font-size:12px;color:var(--muted);margin-top:3px}.debt-amount{font-variant-numeric:tabular-nums;white-space:nowrap}
     .debt-sort{margin-bottom:12px}.debt-sort select{width:100%;border:1px solid var(--line);background:#101013;color:var(--text);border-radius:16px;padding:12px}.debt-section{border:1px solid var(--line);background:var(--panel);border-radius:24px;margin-bottom:10px;overflow:hidden;scroll-margin-top:20px}.debt-section>summary{cursor:pointer;padding:14px 15px;font-weight:650;display:grid;grid-template-columns:minmax(0,1fr) 36px 18px;gap:7px;align-items:center;list-style:none}.debt-section summary::-webkit-details-marker{display:none}.debt-section>summary::after{content:'⌄';color:currentColor;text-align:right;transition:.2s transform}.debt-section[open]>summary::after{transform:rotate(180deg)}.debt-group-title{display:flex;align-items:center;gap:10px;min-width:0}.debt-group-icon{width:32px;height:32px;border-radius:11px;background:rgba(255,255,255,.055);display:grid;place-items:center;flex:none}.debt-group-icon svg{width:19px;height:19px}.debt-group-count{text-align:right;min-width:36px;font-variant-numeric:tabular-nums}.debt-status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 10px}.debt-status{border:1px solid var(--line);border-radius:17px;background:#111114;overflow:hidden;min-width:0}.debt-status summary{padding:12px 10px;display:flex;justify-content:space-between;gap:6px;font-size:12px;cursor:pointer;list-style:none}.debt-status .transactions{border:0;border-top:1px solid var(--line);border-radius:0}.debt-status .tx{grid-template-columns:34px minmax(0,1fr);padding:10px 8px;gap:7px}.debt-status .tx-icon{width:32px;height:32px;border-radius:11px}.debt-status .debt-amount{grid-column:2;font-size:13px}.debt-status .empty{padding:16px 6px;font-size:12px}.urgent-badge{color:var(--accent);font-size:12px}.round-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}.round-action{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:#1a1a1e;color:var(--text);display:grid;place-items:center;font-size:20px;padding:0}.round-action.primary-icon{background:var(--text);color:#080808}.round-action.danger-icon{color:var(--accent)}
@@ -167,7 +152,7 @@
     .scan-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.scan-option{border:1px solid var(--line);border-radius:20px;background:#151518;color:var(--text);padding:18px 10px;text-align:center}.scan-preview{width:100%;max-height:260px;object-fit:contain;border-radius:18px;margin-top:12px;background:#060606}
     .clickable-card{cursor:pointer}.clickable-card:active{transform:scale(.99)}
     .jelly-item{will-change:transform;transform:translate3d(0,var(--jelly-y,0),0) scaleX(var(--jelly-x,1)) scaleY(var(--jelly-s,1));transform-origin:50% 45%}
-    @media (prefers-reduced-motion:reduce){.jelly-item{transform:none!important}.profile-drawer,.app,.bottom-zone,.dock-layout,.quick-entry-shell,.dock-group{transition-duration:.01ms!important}}
+    @media (prefers-reduced-motion:reduce){.jelly-item{transform:none!important} .profile-drawer,.app{transition-duration:.01ms!important}}
     .hidden{display:none!important}
     @media (min-width:700px){
       body{background:#020202}
@@ -178,19 +163,6 @@
 </head>
 <body>
 <div class="account-ticker" id="accountTicker" aria-label="Рухомий список рахунків"><div class="ticker-track" id="tickerTrack"></div></div>
-<svg aria-hidden="true" width="0" height="0" style="position:fixed;pointer-events:none">
-  <defs>
-    <filter id="glassRefraction" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.036" numOctaves="2" seed="17" result="glassNoise"/>
-      <feGaussianBlur in="glassNoise" stdDeviation="0.35" result="smoothGlass"/>
-      <feDisplacementMap in="SourceGraphic" in2="smoothGlass" scale="20" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-    <filter id="glassRefractionSoft" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.018 0.03" numOctaves="1" seed="9" result="softNoise"/>
-      <feDisplacementMap in="SourceGraphic" in2="softNoise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-  </defs>
-</svg>
 <div class="profile-drawer-backdrop" id="profileDrawerBackdrop">
   <aside class="profile-drawer" id="profileDrawer" aria-label="Меню профілю">
     <h2 class="drawer-title">Профіль</h2>
@@ -210,6 +182,7 @@
       <div><h1>Гарного дня!</h1><div class="sub" id="todayLabel"></div></div>
     </div>
     <label class="page-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input id="homeSearch" type="search" placeholder="Пошук операцій" autocomplete="off"></label>
+    <div class="finance-entry-actions"><button id="addFinanceOperation">＋ Операція</button><button id="openFinanceInput">Ввести фразу</button></div>
 
     <div class="balance-card card">
       <div class="label" id="openBalanceLabel">Загальний баланс</div>
@@ -316,18 +289,14 @@
 
 </div>
 
-<div class="bottom-zone" id="bottomZone">
-  <div class="dock-layout">
-    <div class="quick-entry-shell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M12 5v14"/></svg><input class="quick-entry-input" id="quickEntryInput" placeholder="Введи операцію або борг" autocomplete="off" enterkeyhint="done"><button class="quick-send" id="quickSend" aria-label="Розпізнати фразу"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6.5 10.5 12 5l5.5 5.5"/></svg></button></div>
-    <nav class="dock" aria-label="Головна навігація"><div class="dock-group"><div class="dock-indicator" aria-hidden="true"></div>
-      <button data-screen="goals" aria-label="Цілі"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="m14 10 5-5"/></svg><span class="dock-label">Цілі</span></button>
-      <button data-screen="insights" aria-label="Аналітика"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 20V11M10 20V5M15 20v-8M20 20V8"/></svg><span class="dock-label">Аналітика</span></button>
-      <button data-screen="debts" aria-label="Борги"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span class="dock-label">Борги</span></button>
-      <button class="active" data-screen="home" aria-label="Дім"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 11.5 12 4l9 7.5V21h-6v-6H9v6H3z"/></svg><span class="dock-label">Дім</span></button>
-      <button class="more-btn" id="moreBtn" aria-label="Додатково"><svg class="more-icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg><svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 6-6 6 6 6"/></svg><span class="dock-label">Додатково</span></button>
-    </div></nav>
-  </div>
-</div>
+<canvas id="glassCanvas" aria-hidden="true"></canvas>
+<nav id="bar" aria-label="Головна навігація">
+ <button data-page="goals" aria-label="Цілі"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg><span>Цілі</span></button>
+ <button data-page="insights" aria-label="Аналітика"><svg viewBox="0 0 24 24"><path d="M5 20v-9M12 20V4M19 20v-6"/></svg><span>Аналітика</span></button>
+ <button data-page="debts" aria-label="Борги"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10.5h18M7 15h4"/></svg><span>Борги</span></button>
+ <button class="on" data-page="home" aria-label="Дім"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8.5a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg><span>Дім</span></button>
+ <button data-page="more" aria-label="Додатково"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg><span>Додатково</span></button>
+</nav>
 
 <div class="sheet-backdrop" id="accountAddBackdrop"><div class="sheet"><div class="handle"></div><h3>Додати рахунок</h3><p>Банківські підключення працюють лише через захищений сервер. Паролі, PIN та SMS-коди тут ніколи не вводяться.</p><div class="provider-list"><button class="provider-button" data-provider="PKO"><span>PKO Bank Polski</span><span>›</span></button><button class="provider-button" data-provider="REVOLUT"><span>Revolut</span><span>›</span></button><button class="provider-button" data-provider="ERSTE"><span>Erste</span><span>›</span></button><button class="provider-button" data-provider="MONOBANK"><span>Monobank</span><span>›</span></button></div><div class="label" style="margin:20px 0 9px">Додати вручну</div><div class="provider-list"><button class="provider-button" data-manual-type="cash"><span>Готівка</span><span>＋</span></button><button class="provider-button" data-manual-type="manual"><span>Інший рахунок</span><span>＋</span></button></div><button class="danger" data-close-sheet="accountAddBackdrop">Закрити</button></div></div>
 <div class="sheet-backdrop" id="manualAccountBackdrop"><div class="sheet"><div class="handle"></div><h3 id="manualAccountTitle">Новий рахунок</h3><div class="field"><label>Назва</label><input id="manualAccountName" placeholder="Готівка"></div><div class="field"><label>Поточний баланс</label><input id="manualAccountBalance" inputmode="decimal" placeholder="0"></div><div class="field"><label>Валюта</label><select id="manualAccountCurrency"><option>PLN</option><option>EUR</option><option>USD</option><option>UAH</option></select></div><button class="primary" id="saveManualAccount">Зберегти</button><button class="danger" data-close-sheet="manualAccountBackdrop">Скасувати</button></div></div>
@@ -346,7 +315,7 @@
     <div class="profile-card">
       <div class="label">Швидке введення</div>
       <div class="big-stat" style="font-size:22px;margin-top:8px">UA + PL + EN текстом</div>
-      <div class="tiny" style="margin-top:8px">Нижнє поле відкриває клавіатуру. Фраза локально перетворюється на операцію або борг без API.</div>
+      <div class="tiny" style="margin-top:8px">Кнопка «Ввести фразу» на головній сторінці відкриває клавіатуру. Фраза локально перетворюється на операцію або борг без API.</div>
       <div class="tiny" id="modelProfileStatus" style="margin-top:10px">Готово до введення</div>
     </div>
     <div class="profile-card market-picker">
@@ -441,7 +410,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const STORAGE_KEY='voice-finance-v01';
+const STORAGE_KEY='webgl-glass-bar-v01';
 const DEFAULT_CATEGORIES=[
   {id:'groceries',name:'Продукти',icon:'🛒'},
   {id:'transport',name:'Транспорт',icon:'🚕'},
@@ -458,7 +427,7 @@ const FIAT_CURRENCIES=['PLN','EUR','USD','GBP','CHF','UAH','CZK','SEK','NOK','DK
 const FIAT_PAIRS=FIAT_CURRENCIES.flatMap(base=>FIAT_CURRENCIES.filter(quote=>quote!==base).map(quote=>({id:`fx:${base}${quote}`,kind:'fx',base,quote,label:`${base}/${quote}`}))).slice(0,100);
 const CRYPTO_MARKETS=[['XBTUSD','BTC','Bitcoin'],['ETHUSD','ETH','Ethereum'],['USDTUSD','USDT','Tether'],['SOLUSD','SOL','Solana'],['XRPUSD','XRP','XRP'],['USDCUSD','USDC','USD Coin'],['DOGEUSD','DOGE','Dogecoin'],['ADAUSD','ADA','Cardano'],['LTCUSD','LTC','Litecoin'],['DOTUSD','DOT','Polkadot']].map(([pair,symbol,name])=>({id:`crypto:${pair}`,kind:'crypto',pair,symbol,name,label:`${symbol}/USD`}));
 const DEFAULT_MARKETS=['fx:EURPLN','fx:USDPLN','fx:EURUSD',...CRYPTO_MARKETS.map(m=>m.id)];
-const BANKING_API_BASE=document.querySelector('meta[name="voice-finance-api"]')?.content?.replace(/\/$/,'')||'';
+const BANKING_API_BASE=document.querySelector('meta[name="webgl-glass-bar-api"]')?.content?.replace(/\/$/,'')||'';
 const uid=()=>{try{if(globalThis.crypto&&typeof globalThis.crypto.randomUUID==='function')return globalThis.crypto.randomUUID()}catch(e){}return 'id-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)};
 let state=loadState();
 let editingId=null;
@@ -481,9 +450,9 @@ let editingDebtId=null;
 let debtDirection='owed';
 let debtView='owed';
 let debtSort='name-asc';
-let peopleDirection=sessionStorage.getItem('voice-finance-people-direction')||'receivable';
-let selectedPerson=sessionStorage.getItem('voice-finance-selected-person')||'';
-let selectedPersonDirection=sessionStorage.getItem('voice-finance-selected-person-direction')||'receivable';
+let peopleDirection=sessionStorage.getItem('webgl-glass-bar-people-direction')||'receivable';
+let selectedPerson=sessionStorage.getItem('webgl-glass-bar-selected-person')||'';
+let selectedPersonDirection=sessionStorage.getItem('webgl-glass-bar-selected-person-direction')||'receivable';
 let selectedScanFile=null;
 let scanPreviewUrl='';
 let voicePositionTimers=[];
@@ -495,15 +464,6 @@ let recordingTimeout=null;
 let lockedScrollY=0;
 let drawerLockedScrollY=0;
 let lastPageScrollY=window.scrollY;
-let dockCompact=false;
-let dockTouchStartY=0;
-let dockTouchAtTop=false;
-let dockTouchAtBottom=false;
-let dockBoundaryHandled=false;
-let dockInteractionsReady=false;
-let dockIgnoreScrollUntil=0;
-let dockIndicatorIndex=0;
-let dockIndicatorAnimation=null;
 let accountsExpanded=false;
 let analysisPeriod='1M';
 let accountPeriod='1M';
@@ -511,7 +471,7 @@ let flowPeriod='1M';
 let selectedAccountId='';
 let selectedFlowType='income';
 let marketData={};
-let selectedMarketId=sessionStorage.getItem('voice-finance-selected-market')||'';
+let selectedMarketId=sessionStorage.getItem('webgl-glass-bar-selected-market')||'';
 let marketPeriod='1M';
 let tickerOffset=0;
 let tickerDistance=0;
@@ -640,11 +600,11 @@ function runTicker(time){if(!tickerLastFrame)tickerLastFrame=time;const elapsed=
 function setupTickerDrag(){const box=document.querySelector('#accountTicker');box.addEventListener('pointerdown',e=>{tickerDragging=true;tickerMoved=false;tickerPointerId=e.pointerId;tickerDragX=e.clientX;tickerDragOffset=tickerOffset;tickerPressAt=performance.now();tickerPressMarketId=e.target.closest?.('[data-market-id]')?.dataset.marketId||'';box.classList.add('dragging');box.setPointerCapture?.(e.pointerId)});box.addEventListener('pointermove',e=>{if(!tickerDragging||e.pointerId!==tickerPointerId)return;const dx=e.clientX-tickerDragX;if(Math.abs(dx)>7)tickerMoved=true;tickerOffset=tickerDragOffset-dx;if(tickerDistance)tickerOffset=((tickerOffset%tickerDistance)+tickerDistance)%tickerDistance;document.querySelector('#tickerTrack').style.transform=`translate3d(${-tickerOffset}px,0,0)`});const end=(e,allowTap)=>{if(!tickerDragging||e.pointerId!==tickerPointerId)return;const tapped=allowTap&&!tickerMoved&&performance.now()-tickerPressAt<380&&tickerPressMarketId,id=tickerPressMarketId;tickerDragging=false;tickerPointerId=null;tickerPressMarketId='';tickerResumeAt=performance.now()+700;box.classList.remove('dragging');if(tapped)openMarketDetail(id)};box.addEventListener('pointerup',e=>end(e,true));box.addEventListener('pointercancel',e=>end(e,false))}
 function marketCatalog(){return[...FIAT_PAIRS,...CRYPTO_MARKETS]}
 function renderMarketPicker(){const list=document.querySelector('#marketList');if(!list)return;const q=(document.querySelector('#marketSearch')?.value||'').trim().toLowerCase(),selected=new Set(state.marketSelection||DEFAULT_MARKETS),catalog=marketCatalog().filter(m=>!q||`${m.label} ${m.name||''}`.toLowerCase().includes(q));list.innerHTML=catalog.map(m=>`<label class="market-option"><input type="checkbox" value="${m.id}" ${selected.has(m.id)?'checked':''}><span>${esc(m.label)}</span><small>${m.kind==='crypto'?'Крипто':'Валюта'}</small></label>`).join('')||'<div class="empty">Нічого не знайдено</div>';list.querySelectorAll('input').forEach(input=>input.onchange=()=>{const set=new Set(state.marketSelection||DEFAULT_MARKETS);input.checked?set.add(input.value):set.delete(input.value);state.marketSelection=[...set].slice(0,20);saveState();loadMarketData()})}
-async function loadMarketData(){const catalog=marketCatalog(),selected=new Set(state.marketSelection||DEFAULT_MARKETS),wanted=catalog.filter(m=>selected.has(m.id)),cacheKey='voice-finance-market-cache';try{const cached=JSON.parse(localStorage.getItem(cacheKey)||'{}');if(cached.data)marketData=cached.data}catch(e){}renderTicker();await Promise.all(wanted.map(async m=>{try{if(m.kind==='fx'){const [latest,history]=await Promise.all([fetch(`https://api.frankfurter.dev/v2/rate/${m.base.toLowerCase()}/${m.quote.toLowerCase()}`).then(r=>{if(!r.ok)throw Error();return r.json()}),fetch(`https://api.frankfurter.dev/v2/rates?from=${new Date(Date.now()-14*86400000).toISOString().slice(0,10)}&base=${m.base.toLowerCase()}&quotes=${m.quote.toLowerCase()}`).then(r=>r.json())]);const values=history.map(x=>Number(x.rate)).filter(Number.isFinite),first=values[0]||Number(latest.rate),value=Number(latest.rate);marketData[m.id]={...m,value,history:values,change:first?(value-first)/first*100:0,updated:latest.date}}else{const data=await fetch(`https://api.kraken.com/0/public/Ticker?pair=${m.pair}`).then(r=>{if(!r.ok)throw Error();return r.json()}),row=Object.values(data.result||{})[0];if(!row)throw Error();const value=Number(row.c[0]),open=Number(row.o);marketData[m.id]={...m,value,history:[open,value],change:open?(value-open)/open*100:0,updated:new Date().toISOString()}}}catch(e){}}));localStorage.setItem(cacheKey,JSON.stringify({updated:Date.now(),data:marketData}));renderTicker()}
+async function loadMarketData(){const catalog=marketCatalog(),selected=new Set(state.marketSelection||DEFAULT_MARKETS),wanted=catalog.filter(m=>selected.has(m.id)),cacheKey='webgl-glass-bar-market-cache';try{const cached=JSON.parse(localStorage.getItem(cacheKey)||'{}');if(cached.data)marketData=cached.data}catch(e){}renderTicker();await Promise.all(wanted.map(async m=>{try{if(m.kind==='fx'){const [latest,history]=await Promise.all([fetch(`https://api.frankfurter.dev/v2/rate/${m.base.toLowerCase()}/${m.quote.toLowerCase()}`).then(r=>{if(!r.ok)throw Error();return r.json()}),fetch(`https://api.frankfurter.dev/v2/rates?from=${new Date(Date.now()-14*86400000).toISOString().slice(0,10)}&base=${m.base.toLowerCase()}&quotes=${m.quote.toLowerCase()}`).then(r=>r.json())]);const values=history.map(x=>Number(x.rate)).filter(Number.isFinite),first=values[0]||Number(latest.rate),value=Number(latest.rate);marketData[m.id]={...m,value,history:values,change:first?(value-first)/first*100:0,updated:latest.date}}else{const data=await fetch(`https://api.kraken.com/0/public/Ticker?pair=${m.pair}`).then(r=>{if(!r.ok)throw Error();return r.json()}),row=Object.values(data.result||{})[0];if(!row)throw Error();const value=Number(row.c[0]),open=Number(row.o);marketData[m.id]={...m,value,history:[open,value],change:open?(value-open)/open*100:0,updated:new Date().toISOString()}}}catch(e){}}));localStorage.setItem(cacheKey,JSON.stringify({updated:Date.now(),data:marketData}));renderTicker()}
 function marketNumber(value){return Number(value).toLocaleString('uk-UA',{maximumFractionDigits:Number(value)<10?5:2})}
 function renderMarketDetail(){const m=marketData[selectedMarketId]||marketCatalog().find(x=>x.id===selectedMarketId);if(!m)return;const start=periodStart(marketPeriod),all=m.detailHistory||[],firstInPeriod=all.findIndex(p=>new Date(p.timestamp)>=start),series=firstInPeriod<0?[]:all.slice(Math.max(0,firstInPeriod-1)),fallback=(m.history||[]).map((value,i,a)=>({timestamp:new Date(Date.now()-(a.length-1-i)*86400000).toISOString(),value:Number(value)})),points=(series.length?series:fallback).filter(p=>Number.isFinite(Number(p.value))),values=points.map(p=>Number(p.value)),g=lineGeometry(values,440,250,12),first=values[0],last=values.at(-1)??Number(m.value),change=first?(last-first)/first*100:Number(m.change||0),positive=change>=0;document.querySelector('#marketDetailKind').textContent=m.kind==='crypto'?'Криптовалюта':'Валютна пара';document.querySelector('#marketDetailTitle').textContent=m.label;document.querySelector('#marketDetailValue').textContent=marketNumber(last);const changeEl=document.querySelector('#marketDetailChange');changeEl.textContent=`${change>=0?'+':''}${change.toFixed(2)}% за період`;changeEl.className='analysis-change '+(change>0?'trend-up':change<0?'trend-down':'trend-flat');document.querySelector('#marketLine').setAttribute('stroke',positive?'#66d896':'#ff5364');document.querySelector('#marketArea').setAttribute('fill',positive?'rgba(102,216,150,.12)':'rgba(255,83,100,.12)');document.querySelector('#marketLine').setAttribute('d',g.line);document.querySelector('#marketArea').setAttribute('d',g.area);document.querySelector('#marketChartEmpty').classList.toggle('hidden',values.length>1);registerInteractiveChart('#marketChart',g,points,{formatValue:marketNumber,color:positive?'#66d896':'#ff5364'});document.querySelector('#marketMin').textContent=values.length?marketNumber(Math.min(...values)):'—';document.querySelector('#marketMax').textContent=values.length?marketNumber(Math.max(...values)):'—';document.querySelector('#marketOpen').textContent=Number.isFinite(first)?marketNumber(first):'—';document.querySelector('#marketUpdated').textContent=m.updated?new Date(m.updated).toLocaleString('uk-UA',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'—';document.querySelector('#marketSource').textContent=m.kind==='crypto'?'Реальні публічні ринкові дані Kraken. Дані можуть надходити із затримкою.':'Реальні довідкові валютні курси Frankfurter на основі даних ЄЦБ. Дані можуть надходити із затримкою.'}
-async function loadMarketDetail(id){const m=marketCatalog().find(x=>x.id===id),current=marketData[id]||m;if(!m)return;renderMarketDetail();if(current?.detailHistory?.length)return;try{let history;if(m.kind==='fx'){const from=new Date();from.setFullYear(from.getFullYear()-5);const rows=await fetch(`https://api.frankfurter.dev/v2/rates?from=${from.toISOString().slice(0,10)}&base=${m.base.toLowerCase()}&quotes=${m.quote.toLowerCase()}`).then(r=>{if(!r.ok)throw Error();return r.json()});history=rows.map(x=>({timestamp:x.date,value:Number(x.rate)})).filter(x=>Number.isFinite(x.value))}else{const since=Math.floor((Date.now()-365*86400000)/1000),data=await fetch(`https://api.kraken.com/0/public/OHLC?pair=${m.pair}&interval=1440&since=${since}`).then(r=>{if(!r.ok)throw Error();return r.json()}),rows=Object.entries(data.result||{}).find(([,v])=>Array.isArray(v))?.[1]||[];history=rows.map(x=>({timestamp:new Date(Number(x[0])*1000).toISOString(),value:Number(x[4])})).filter(x=>Number.isFinite(x.value))}marketData[id]={...(marketData[id]||m),detailHistory:history};localStorage.setItem('voice-finance-market-cache',JSON.stringify({updated:Date.now(),data:marketData}));renderMarketDetail()}catch(e){document.querySelector('#marketChartEmpty').textContent='Не вдалося оновити історію. Показані останні кешовані дані.';document.querySelector('#marketChartEmpty').classList.remove('hidden')}}
-function openMarketDetail(id){selectedMarketId=id;sessionStorage.setItem('voice-finance-selected-market',id);marketPeriod='1M';document.querySelectorAll('#marketPeriodTabs button').forEach(b=>b.classList.toggle('active',b.dataset.period==='1M'));switchScreen('marketDetail');loadMarketDetail(id)}
+async function loadMarketDetail(id){const m=marketCatalog().find(x=>x.id===id),current=marketData[id]||m;if(!m)return;renderMarketDetail();if(current?.detailHistory?.length)return;try{let history;if(m.kind==='fx'){const from=new Date();from.setFullYear(from.getFullYear()-5);const rows=await fetch(`https://api.frankfurter.dev/v2/rates?from=${from.toISOString().slice(0,10)}&base=${m.base.toLowerCase()}&quotes=${m.quote.toLowerCase()}`).then(r=>{if(!r.ok)throw Error();return r.json()});history=rows.map(x=>({timestamp:x.date,value:Number(x.rate)})).filter(x=>Number.isFinite(x.value))}else{const since=Math.floor((Date.now()-365*86400000)/1000),data=await fetch(`https://api.kraken.com/0/public/OHLC?pair=${m.pair}&interval=1440&since=${since}`).then(r=>{if(!r.ok)throw Error();return r.json()}),rows=Object.entries(data.result||{}).find(([,v])=>Array.isArray(v))?.[1]||[];history=rows.map(x=>({timestamp:new Date(Number(x[0])*1000).toISOString(),value:Number(x[4])})).filter(x=>Number.isFinite(x.value))}marketData[id]={...(marketData[id]||m),detailHistory:history};localStorage.setItem('webgl-glass-bar-market-cache',JSON.stringify({updated:Date.now(),data:marketData}));renderMarketDetail()}catch(e){document.querySelector('#marketChartEmpty').textContent='Не вдалося оновити історію. Показані останні кешовані дані.';document.querySelector('#marketChartEmpty').classList.remove('hidden')}}
+function openMarketDetail(id){selectedMarketId=id;sessionStorage.setItem('webgl-glass-bar-selected-market',id);marketPeriod='1M';document.querySelectorAll('#marketPeriodTabs button').forEach(b=>b.classList.toggle('active',b.dataset.period==='1M'));switchScreen('marketDetail');loadMarketDetail(id)}
 function filteredSnapshots(period,id){return(state.balanceSnapshots||[]).filter(s=>new Date(s.timestamp)>=periodStart(period)&&(!id||Number.isFinite(Number(s.accountBalances?.[id]))))}
 function openAccountDetail(id){selectedAccountId=id;switchScreen('accountDetail')}
 function renderAccountDetail(){const a=(state.accounts||[]).find(x=>x.id===selectedAccountId);if(!a)return;document.querySelector('#accountDetailTitle').textContent=a.displayName;document.querySelector('#accountDetailBalance').textContent=fmt(a.currentBalance,a.currency);const snapshots=filteredSnapshots(accountPeriod,a.id),chartData=snapshots.map(s=>({timestamp:s.timestamp,value:Number(s.accountBalances[a.id])})),values=chartData.map(s=>s.value),g=lineGeometry(values,440,250,12),empty=values.length<2;document.querySelector('#accountLine').setAttribute('d',empty?'':g.line);document.querySelector('#accountArea').setAttribute('d',empty?'':g.area);document.querySelector('#accountChartEmpty').classList.toggle('hidden',!empty);registerInteractiveChart('#accountChart',g,chartData,{formatValue:value=>fmt(value,a.currency)});const first=values[0]??a.currentBalance,last=values.at(-1)??a.currentBalance,change=last-first;document.querySelector('#accountCurrent').textContent=fmt(a.currentBalance,a.currency);document.querySelector('#accountChange').textContent=values.length>1?formatMovement(change,a.currency):'—';document.querySelector('#accountMax').textContent=values.length?fmt(Math.max(...values),a.currency):'—';document.querySelector('#accountMin').textContent=values.length?fmt(Math.min(...values),a.currency):'—';const tx=state.transactions.filter(t=>t.accountId===a.id).sort((x,y)=>new Date(y.date)-new Date(x.date));const el=document.querySelector('#accountTransactions');el.innerHTML=tx.length?tx.map(txHtml).join(''):'<div class="empty">До цього рахунку ще не прив’язано операцій</div>';bindTxRows(el)}
@@ -741,13 +701,13 @@ function renderDrawerPeople(){
   const fill=(root,direction)=>{const profiles=personProfiles(direction).slice(0,4);root.innerHTML=profiles.map(p=>profileRow(p,direction)).join('')||'<div class="empty">Поки порожньо</div>';bindProfileRows(root)};
   fill(clients,'receivable');fill(creditors,'owed');
 }
-function openPeople(direction){peopleDirection=direction;sessionStorage.setItem('voice-finance-people-direction',direction);renderPeople();switchScreen('people')}
+function openPeople(direction){peopleDirection=direction;sessionStorage.setItem('webgl-glass-bar-people-direction',direction);renderPeople();switchScreen('people')}
 function renderPeople(){
   const list=document.querySelector('#peopleList');if(!list)return;const profiles=personProfiles(peopleDirection),receivable=peopleDirection==='receivable';
   document.querySelector('#peopleTitle').textContent=receivable?'Клієнти':'Мої борги';document.querySelector('#peopleSubtitle').textContent=receivable?'Усі, хто винен мені':'Усі, кому винен я';
   list.innerHTML=profiles.length?profiles.map(p=>`<div class="tx" data-person="${esc(p.name)}" data-direction="${peopleDirection}"><div class="tx-icon">${receivable?'👤':'↗'}</div><div><div class="tx-title">${esc(p.name)}</div><div class="tx-meta">Не оплачено: ${p.open.length} · Оплачено: ${p.paid.length}</div></div><strong class="debt-amount ${receivable?'pos':'neg'}">${profileAmount(p.open)}</strong></div>`).join(''):'<div class="empty">Анкет ще немає</div>';bindProfileRows(list);
 }
-function openPersonProfile(direction,person){selectedPersonDirection=direction;selectedPerson=person;sessionStorage.setItem('voice-finance-selected-person-direction',direction);sessionStorage.setItem('voice-finance-selected-person',person);renderPersonProfile();closeProfileDrawer();switchScreen('person')}
+function openPersonProfile(direction,person){selectedPersonDirection=direction;selectedPerson=person;sessionStorage.setItem('webgl-glass-bar-selected-person-direction',direction);sessionStorage.setItem('webgl-glass-bar-selected-person',person);renderPersonProfile();closeProfileDrawer();switchScreen('person')}
 function renderPersonProfile(){
   const list=document.querySelector('#personDebtList');if(!list||!selectedPerson)return;const key=foldText(selectedPerson),items=state.debts.filter(d=>d.direction===selectedPersonDirection&&foldText(d.person)===key).sort((a,b)=>new Date(b.date)-new Date(a.date));
   const receivable=selectedPersonDirection==='receivable';document.querySelector('#personEyebrow').textContent=receivable?'Клієнт':'Мій борг';document.querySelector('#personTitle').textContent=selectedPerson;document.querySelector('#personSubtitle').textContent=receivable?'Всі борги цього клієнта':'Всі борги цій людині';document.querySelector('#personOpenTotal').textContent=profileAmount(items.filter(d=>!d.paid));document.querySelector('#personPaidTotal').textContent=profileAmount(items.filter(d=>d.paid));
@@ -868,37 +828,20 @@ function openAllTx(){
 }
 function switchScreen(id){
   if(!document.getElementById(id)?.classList.contains('screen'))id='home';
-  const buttons=[...document.querySelectorAll('.dock [data-screen]')],navId=(id==='people'||id==='person')?'debts':['balanceAnalysis','accountDetail','flowDetail','marketDetail'].includes(id)?'home':id,nextIndex=Math.max(0,buttons.findIndex(b=>b.dataset.screen===navId));
   closeProfileDrawer();
   document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
-  buttons.forEach(b=>b.classList.toggle('active',b.dataset.screen===navId));
-  document.querySelector('#bottomZone')?.classList.toggle('compact-home',navId==='home');
-  moveDockIndicator(nextIndex);
+  notifyGlassNavigation();
   if(location.hash!==`#${id}`)history.replaceState(null,'',`#${id}`);
   if(id==='home')requestAnimationFrame(fitBalanceText);if(id==='balanceAnalysis')renderBalanceAnalysis();if(id==='accountDetail')renderAccountDetail();if(id==='flowDetail')renderFlowDetail();if(id==='marketDetail')renderMarketDetail();
-  dockIgnoreScrollUntil=performance.now()+550;window.scrollTo({top:0,behavior:'auto'});lastPageScrollY=0;
+  window.scrollTo({top:0,behavior:'auto'});lastPageScrollY=0;
   requestAnimationFrame(refreshJellyItems);
 }
 function lockDrawerPage(){if(document.body.classList.contains('drawer-scroll-locked'))return;drawerLockedScrollY=window.scrollY;document.body.classList.add('drawer-scroll-locked');document.documentElement.style.overflow='hidden';document.body.style.overflow='hidden'}
 function unlockDrawerPage(){if(!document.body.classList.contains('drawer-scroll-locked'))return;document.body.classList.remove('drawer-scroll-locked');document.documentElement.style.overflow='';document.body.style.overflow='';if(Math.abs(window.scrollY-drawerLockedScrollY)>1)window.scrollTo(0,drawerLockedScrollY);lastPageScrollY=drawerLockedScrollY}
-function openProfileDrawer(){lockDrawerPage();document.body.classList.add('drawer-open');const drawer=document.querySelector('#profileDrawer');drawer.scrollTop=0;document.querySelector('#profileDrawerBackdrop').classList.add('open');const button=document.querySelector('#moreBtn');button.classList.add('active');button.setAttribute('aria-label','Назад')}
-function closeProfileDrawer(){const wasOpen=document.body.classList.contains('drawer-open');document.body.classList.remove('drawer-open');document.querySelector('#profileDrawerBackdrop')?.classList.remove('open');const button=document.querySelector('#moreBtn');button?.classList.remove('active');button?.setAttribute('aria-label','Додатково');if(wasOpen)unlockDrawerPage()}
+function openProfileDrawer(){lockDrawerPage();document.body.classList.add('drawer-open');document.querySelector('#profileDrawer').scrollTop=0;document.querySelector('#profileDrawerBackdrop').classList.add('open');notifyGlassNavigation(4)}
+function closeProfileDrawer(){const wasOpen=document.body.classList.contains('drawer-open');document.body.classList.remove('drawer-open');document.querySelector('#profileDrawerBackdrop')?.classList.remove('open');if(wasOpen){unlockDrawerPage();notifyGlassNavigation()}}
 function toggleProfileDrawer(){document.body.classList.contains('drawer-open')?closeProfileDrawer():openProfileDrawer()}
-function setDockCompact(compact){
-  if(dockCompact===compact)return;
-  dockCompact=compact;if(!compact)dockIgnoreScrollUntil=performance.now()+980;const zone=document.querySelector('#bottomZone'),indicator=document.querySelector('.dock-indicator');dockIndicatorAnimation?.cancel();dockIndicatorAnimation=null;indicator?.classList.remove('moving');zone.classList.toggle('compact',compact);
-}
-function moveDockIndicator(nextIndex,animate=true){
-  const indicator=document.querySelector('.dock-indicator'),group=document.querySelector('.dock-group');if(!indicator||!group)return;
-  const unit=(group.clientWidth-12)/5,to=nextIndex*unit,matrix=new DOMMatrixReadOnly(getComputedStyle(indicator).transform),from=Number.isFinite(matrix.m41)?matrix.m41:dockIndicatorIndex*unit,distance=Math.abs(to-from)/Math.max(1,unit);
-  dockIndicatorAnimation?.cancel();dockIndicatorAnimation=null;indicator.classList.remove('moving');indicator.style.transform=`translateX(${from}px) scaleY(1)`;
-  if(animate&&distance>.01&&!dockCompact&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
-    const squeeze=Math.max(.62,1-distance*.085),middle=from+(to-from)*.5;
-    dockIndicatorAnimation=indicator.animate([{transform:`translateX(${from}px) scaleY(1)`},{transform:`translateX(${middle}px) scaleY(${squeeze})`,offset:.5},{transform:`translateX(${to}px) scaleY(1)`}],{duration:700,easing:'cubic-bezier(.65,0,.35,1)',fill:'forwards'});
-    const active=dockIndicatorAnimation;active.onfinish=()=>{if(dockIndicatorAnimation!==active)return;indicator.style.transform=`translateX(${to}px) scaleY(1)`;active.cancel();dockIndicatorAnimation=null};
-  }else indicator.style.transform=`translateX(${to}px) scaleY(1)`;
-  dockIndicatorIndex=nextIndex;
-}
+function notifyGlassNavigation(index){const id=document.querySelector('.screen.active')?.id||'home';const navId=['people','person'].includes(id)?'debts':['balanceAnalysis','accountDetail','flowDetail','marketDetail'].includes(id)?'home':id;document.dispatchEvent(new CustomEvent('finance:navigation',{detail:{index:index??Math.max(0,['goals','insights','debts','home'].indexOf(navId))}}))}
 function refreshJellyItems(){
   jellyItems=[...document.querySelectorAll('.screen.active .card,.screen.active .transactions,.screen.active .goal-card,.screen.active .insight-card,.screen.active .debt-total,.screen.active .debt-section')];
   jellyItems.forEach(el=>{el.classList.add('jelly-item');if(!jellyState.has(el))jellyState.set(el,{y:0})});
@@ -911,35 +854,8 @@ function runJelly(){
 function handlePageScroll(){
   if(document.body.classList.contains('sheet-open')||document.body.classList.contains('drawer-open'))return;
   const y=window.scrollY,delta=y-lastPageScrollY;lastPageScrollY=y;
-  if(dockInteractionsReady&&performance.now()>=dockIgnoreScrollUntil&&delta>5)setDockCompact(true);
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   jellyVelocity=Math.max(-16,Math.min(16,delta));if(!jellyFrame)jellyFrame=requestAnimationFrame(runJelly);
-}
-function handleDockTouchEnd(e){
-  if(document.body.classList.contains('sheet-open')||document.body.classList.contains('drawer-open'))return;
-  if(dockBoundaryHandled){dockBoundaryHandled=false;return}
-  const endY=e.changedTouches?.[0]?.clientY??dockTouchStartY,delta=dockTouchStartY-endY;
-  if(Math.abs(delta)<26)return;
-  if(delta>0){if(dockTouchAtBottom&&dockCompact)setDockCompact(false);else setDockCompact(true)}
-  else if(dockTouchAtTop&&dockCompact)setDockCompact(false);
-}
-function handleDockTouchMove(e){
-  if(!dockCompact||dockBoundaryHandled||e.touches.length!==1)return;const delta=dockTouchStartY-e.touches[0].clientY;
-  if((dockTouchAtBottom&&delta>26)||(dockTouchAtTop&&delta<-26)){dockBoundaryHandled=true;setDockCompact(false)}
-}
-function handleBoundaryWheel(e){
-  if(!dockCompact)return;const maxScroll=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
-  if((e.deltaY>0&&window.scrollY>=maxScroll-2)||(e.deltaY<0&&window.scrollY<=2))setDockCompact(false);
-}
-function positionQuickEntry(){
-  const input=document.querySelector('#quickEntryInput'),zone=document.querySelector('#bottomZone'),viewport=window.visualViewport;
-  if(document.activeElement!==input||!viewport){zone.style.bottom='';return}
-  const keyboardOffset=Math.max(0,window.innerHeight-viewport.height-viewport.offsetTop);
-  zone.style.bottom=keyboardOffset>80?`${keyboardOffset}px`:'';
-}
-function submitQuickEntry(){
-  const quick=document.querySelector('#quickEntryInput'),text=quick.value.trim();if(!text)return;
-  startVoice();document.querySelector('#voiceTestInput').value=text;document.querySelector('#voiceTestBtn').click();quick.value='';
 }
 function openInsightSection(id){switchScreen('insights');requestAnimationFrame(()=>document.querySelector(id)?.scrollIntoView({behavior:'smooth',block:'start'}))}
 function normalizeWords(s){
@@ -1110,7 +1026,7 @@ function ensureWhisperWorker(){
   whisperWorker.onerror=()=>{resetWhisperWorker();setModelStatus('Не вдалося запустити локальну модель',null);setVoiceState('error','Помилка локальної моделі','Текстове поле та ручне додавання продовжують працювати.');};return whisperWorker;
 }
 function chooseMimeType(){const choices=['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'];for(const t of choices)if(window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))return t;return'';}
-function setRecordingVisual(on){document.querySelector('.quick-entry-shell')?.classList.toggle('listening',on);document.querySelector('#voiceLiveDot')?.classList.toggle('pulse',on);}
+function setRecordingVisual(on){document.querySelector('#voiceLiveDot')?.classList.toggle('pulse',on);}
 function updateTimer(){if(!recordingStartedAt)return;document.querySelector('#recordTimer').textContent='● '+((Date.now()-recordingStartedAt)/1000).toFixed(1)+' с';}
 async function startRecording(){
   if(mediaRecorder&&mediaRecorder.state==='recording')return stopRecording();
@@ -1179,23 +1095,19 @@ function renderCatManager(){
 }
 function exportData(){
   const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='voice-finance-data.json';a.click();URL.revokeObjectURL(a.href);
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='webgl-glass-bar-data.json';a.click();URL.revokeObjectURL(a.href);
 }
 function openProvider(provider){if(provider==='MONOBANK'){closeSheet('#accountAddBackdrop');document.querySelector('#monobankToken').value='';openSheet('#monobankBackdrop');return}showToast(`${provider}: безпечне серверне підключення ще не налаштоване`)}
 function openManualAccount(type){closeSheet('#accountAddBackdrop');document.querySelector('#manualAccountTitle').textContent=type==='cash'?'Додати готівку':'Новий ручний рахунок';document.querySelector('#manualAccountName').value=type==='cash'?'Готівка':'';document.querySelector('#manualAccountBalance').value='';document.querySelector('#manualAccountBackdrop').dataset.type=type;openSheet('#manualAccountBackdrop')}
 function saveManualAccount(){const name=document.querySelector('#manualAccountName').value.trim(),amount=parseFloat(document.querySelector('#manualAccountBalance').value.replace(',','.')),currency=document.querySelector('#manualAccountCurrency').value,type=document.querySelector('#manualAccountBackdrop').dataset.type||'manual';if(!name)return showToast('Вкажи назву рахунку');if(!Number.isFinite(amount))return showToast('Вкажи баланс');state.accounts.push({id:uid(),provider:type==='cash'?'CASH':'MANUAL',bankName:name,displayName:name,shortName:name.slice(0,5).toUpperCase(),currency,currentBalance:amount,availableBalance:amount,isActive:true,source:type});state.balanceSnapshots.push({id:uid(),timestamp:new Date().toISOString(),totalBalance:totals().balance,convertedTotalBalance:totals().balance,baseCurrency:'PLN',accountBalances:Object.fromEntries(state.accounts.map(a=>[a.id,a.currentBalance])),source:'manual'});closeSheet('#manualAccountBackdrop');saveState();showToast('Рахунок додано')}
 async function connectMonobank(){const input=document.querySelector('#monobankToken'),token=input.value.trim();if(!token)return showToast('Встав особистий токен');if(!BANKING_API_BASE){input.value='';return showToast('Backend ще не налаштований. Токен не збережено')}try{const r=await fetch(`${BANKING_API_BASE}/api/banks/monobank/connect`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});input.value='';if(!r.ok)throw new Error('Monobank не підтвердив токен');closeSheet('#monobankBackdrop');showToast('Monobank підключено')}catch(e){input.value='';showToast(e.message)}}
-document.querySelectorAll('.dock [data-screen]').forEach(b=>b.onclick=()=>{if(dockCompact&&b.classList.contains('active'))setDockCompact(false);else switchScreen(b.dataset.screen)});
-document.querySelector('#moreBtn').onclick=toggleProfileDrawer;
+document.querySelector('#addFinanceOperation').onclick=()=>openAdd();
+document.querySelector('#openFinanceInput').onclick=startVoice;
 document.querySelector('#profileDrawerBackdrop').onclick=e=>{if(e.target.id==='profileDrawerBackdrop')closeProfileDrawer()};
 document.querySelector('#profileDrawer').onclick=e=>e.stopPropagation();
 document.querySelector('#openSettings').onclick=()=>{closeProfileDrawer();openSheet('#settingsBackdrop')};
 document.querySelector('#incomeSummary').onclick=()=>openFlowDetail('income');
 document.querySelector('#expenseSummary').onclick=()=>openFlowDetail('expense');
-document.querySelector('#quickEntryInput').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();submitQuickEntry()}};
-document.querySelector('#quickSend').onclick=submitQuickEntry;
-document.querySelector('#quickEntryInput').addEventListener('focus',positionQuickEntry);
-document.querySelector('#quickEntryInput').addEventListener('blur',()=>setTimeout(positionQuickEntry,120));
 document.querySelector('#homeSearch').addEventListener('input',renderTransactions);
 document.querySelector('#openBalanceAnalysis').onclick=()=>switchScreen('balanceAnalysis');
 document.querySelector('#openBalanceSummary').onclick=()=>switchScreen('balanceAnalysis');
@@ -1277,24 +1189,18 @@ document.querySelector('#voiceTestInput').addEventListener('focus',scheduleVoice
 document.querySelector('#voiceTestInput').addEventListener('blur',()=>setTimeout(positionVoicePopover,120));
 window.visualViewport?.addEventListener('resize',positionVoicePopover);
 window.visualViewport?.addEventListener('scroll',positionVoicePopover);
-window.visualViewport?.addEventListener('resize',positionQuickEntry);
-window.visualViewport?.addEventListener('scroll',positionQuickEntry);
 addEventListener('orientationchange',()=>{if(document.activeElement!==document.querySelector('#voiceTestInput'))stableViewportHeight=Math.max(window.innerHeight,window.visualViewport?.height||0)});
 addEventListener('resize',()=>requestAnimationFrame(()=>{fitBalanceText();updateTickerSpeed()}));
 addEventListener('scroll',handlePageScroll,{passive:true});
-addEventListener('touchstart',e=>{if(e.touches.length!==1)return;dockBoundaryHandled=false;dockTouchStartY=e.touches[0].clientY;const maxScroll=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);dockTouchAtTop=window.scrollY<=2;dockTouchAtBottom=maxScroll<2||window.scrollY>=maxScroll-2},{passive:true});
-addEventListener('touchmove',handleDockTouchMove,{passive:true});
-addEventListener('touchend',handleDockTouchEnd,{passive:true});
-addEventListener('wheel',handleBoundaryWheel,{passive:true});
 
 if('serviceWorker' in navigator && location.protocol!=='file:'){
   let reloadingForUpdate=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloadingForUpdate)return;reloadingForUpdate=true;location.reload()});
-  navigator.serviceWorker.register('./sw.js?v=43',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});
+  navigator.serviceWorker.register('./sw.js?v=1',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});
 }
 try{
   if('scrollRestoration' in history)history.scrollRestoration='manual';
-  window.scrollTo(0,0);lastPageScrollY=0;document.querySelector('#bottomZone').classList.remove('compact');dockCompact=false;
+  window.scrollTo(0,0);lastPageScrollY=0;
   setupSheetGestures();
   setupTickerDrag();
   requestAnimationFrame(runTicker);
@@ -1302,7 +1208,6 @@ try{
   loadMarketData();
   const initialScreen=location.hash.slice(1)||'home';switchScreen(initialScreen==='marketDetail'&&!selectedMarketId?'home':initialScreen);if(initialScreen==='marketDetail'&&selectedMarketId)loadMarketDetail(selectedMarketId);
   addEventListener('hashchange',()=>switchScreen(location.hash.slice(1)||'home'));
-  setTimeout(()=>{window.scrollTo(0,0);lastPageScrollY=0;setDockCompact(false);dockInteractionsReady=true},900);
   window.__VOICE_FINANCE_READY__=true;
   window.__VOICE_FINANCE_TEST__={parseVoice,getVoiceState:()=>voiceState,getActiveTrackCount:()=>mediaStream?.getTracks().filter(t=>t.readyState==='live').length||0};
 }catch(err){
@@ -1311,5 +1216,9 @@ try{
   if(t){t.textContent='Помилка запуску: '+err.message;t.classList.add('show')}
 }
 </script>
+<script>window.WebGLFinance={navigate(index){if(index===4)toggleProfileDrawer();else switchScreen(['goals','insights','debts','home'][index]||'home')}};document.querySelectorAll('#bar button').forEach((button,index)=>button.addEventListener('click',()=>{if(document.documentElement.dataset.glassRenderer==='fallback')WebGLFinance.navigate(index)}));</script>
+<script src="vendor/html2canvas-1.4.1.min.js"></script>
+<script src="glass-background.js"></script>
+<script src="glass-bar.js"></script>
 </body>
 </html>
