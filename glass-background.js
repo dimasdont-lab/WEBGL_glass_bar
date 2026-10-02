@@ -7,16 +7,20 @@ window.WebGLBackground = function (gl, texture, canvas) {
   const scene = document.createElement('canvas');
   const ctx = scene.getContext('2d', {alpha: false});
   const sources = new Map();
-  let busy = false, revision = 0, lastCapture = 0, lastScene = '';
+  let busy = false, revision = 0, lastCapture = 0, lastScene = '', queued = false, moving = false;
   const stats = {captures: 0, uploads: 0, error: '', captureMs: 0};
   const root = document.documentElement;
-  const nodes = () => [document.querySelector('.app'), document.querySelector('#accountTicker'),
+  const nodes = () => [document.querySelector('.app'),
     ...(document.body.classList.contains('drawer-open') ? [document.querySelector('#profileDrawer')] : [])].filter(Boolean);
   function track() {
     for (const node of nodes()) if (!sources.has(node)) {
       const source = {node, dirty: true, image: null, version: 0, page: null, pages: new Map()};
       sources.set(node, source);
-      new MutationObserver(() => {source.dirty = true;}).observe(node, {
+      new MutationObserver(records => {
+        // Switching visible pages is not a content change: keep their textures.
+        if (records.every(r => r.type === 'attributes' && r.attributeName === 'class' && r.target.classList.contains('screen'))) return;
+        source.dirty = true; source.pages.clear();
+      }).observe(node, {
         subtree: true, childList: true, characterData: true, attributes: true,
         attributeFilter: ['class', 'hidden', 'value', 'src', 'd', 'points']
       });
@@ -25,7 +29,7 @@ window.WebGLBackground = function (gl, texture, canvas) {
     }
   }
   async function capture() {
-    if (busy || performance.now() - lastCapture < 120) return;
+    if (moving || busy || performance.now() - lastCapture < 120) return;
     const source = nodes().map(n => sources.get(n)).find(s => s?.dirty);
     if (!source) return;
     busy = true; source.dirty = false; lastCapture = performance.now();
@@ -43,7 +47,7 @@ window.WebGLBackground = function (gl, texture, canvas) {
             clone.style.position = 'relative'; clone.style.inset = 'auto';
             clone.style.height = height + 'px'; clone.style.overflow = 'visible';
           }
-          doc.querySelectorAll('*').forEach(el => {
+          clone.querySelectorAll('*').forEach(el => {
             el.style.transition = 'none'; el.style.animationPlayState = 'paused';
             if (el.classList.contains('jelly-item')) el.style.transform = 'none';
           });
@@ -64,22 +68,28 @@ window.WebGLBackground = function (gl, texture, canvas) {
     } finally {busy = false;}
   }
   function resize(width, height) {
-    scene.width = width; scene.height = height; lastScene = '';
+    scene.width = width; scene.height = Math.min(height, Math.ceil(192 * width / canvas.clientWidth)); lastScene = '';
     for (const source of sources.values()) source.dirty = true;
   }
-  function draw(width, height) {
+  function draw(width, height, animating) {
+    moving = !!animating;
     track();
     for(const source of sources.values()) {
       const page=source.node.querySelector('.screen.active')?.id;
       if(page && page!==source.page) {
-        source.page=page;source.dirty=true;
+        source.page=page;
         const cached=source.pages.get(page);
+        source.dirty=!cached;
         source.image=cached?.image||null;
         if(cached){source.width=cached.width;source.height=cached.height;source.version=cached.version;}
         lastScene='';
       }
     }
-    capture();
+    // HTML snapshotting must never run inside the indicator's animation frame.
+    if (!moving && !busy && !queued && nodes().some(n => sources.get(n)?.dirty)) {
+      queued = true;
+      setTimeout(() => {queued = false; if (!moving) capture();}, 180);
+    }
     const list = nodes(), poses = list.map(node => {
       const r = node.getBoundingClientRect();
       return {node, r, source: sources.get(node), scroll: node.id === 'profileDrawer' ? node.scrollTop : 0};
@@ -87,7 +97,7 @@ window.WebGLBackground = function (gl, texture, canvas) {
     const key = poses.map(p => [p.node.id, p.source?.version, p.r.left, p.r.top, p.r.width, p.r.height, p.scroll].join(',')).join('|');
     if (key === lastScene) return;
     lastScene = key;
-    ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle = '#050505'; ctx.fillRect(0,0,width,height);
+    ctx.setTransform(1,0,0,1,0,-(height-scene.height)); ctx.fillStyle = '#050505'; ctx.fillRect(0,0,width,height);
     const sx = width / canvas.clientWidth, sy = height / canvas.clientHeight;
     for (const {node, r, source, scroll} of poses) {
       if (!source?.image) continue;
@@ -108,9 +118,6 @@ window.WebGLBackground = function (gl, texture, canvas) {
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
     root.dataset.glassUploads = String(++stats.uploads);
   }
-  document.addEventListener('finance:navigation', () => {
-    for (const source of sources.values()) source.dirty = true;
-    lastScene = '';
-  });
-  return {resize, draw, stats};
+  document.addEventListener('finance:navigation', () => {lastScene = '';});
+  return {resize, draw, stats, textureSize: () => [scene.width, scene.height]};
 };

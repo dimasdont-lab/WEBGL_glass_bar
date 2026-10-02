@@ -8,11 +8,11 @@ if(!gl){document.documentElement.dataset.glassRenderer='fallback';return;}
 var VS='attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
 var FS=[
 '#ifdef GL_FRAGMENT_PRECISION_HIGH','precision highp float;','#else','precision mediump float;','#endif',
-'uniform vec2 u_res;uniform sampler2D u_tex;uniform vec4 u_a;uniform vec4 u_b;uniform float u_s;',
+'uniform vec2 u_res;uniform vec2 u_texSize;uniform sampler2D u_tex;uniform vec4 u_a;uniform vec4 u_b;uniform float u_s;',
 'float sdRB(vec2 p,vec2 b,float r){vec2 q=abs(p)-b+r;return min(max(q.x,q.y),0.)+length(max(q,0.))-r;}',
 'float sdBar(vec2 x){return sdRB(x-u_a.xy,u_a.zw,min(u_a.z,u_a.w));}',
 'float sdInd(vec2 x){return sdRB(x-u_b.xy,u_b.zw,min(u_b.z,u_b.w));}',
-'vec3 bg(vec2 x){return texture2D(u_tex,clamp(x/u_res,0.001,0.999)).rgb;}',
+'vec3 bg(vec2 x){return texture2D(u_tex,clamp((x-vec2(0.,u_res.y-u_texSize.y))/u_texSize,0.001,0.999)).rgb;}',
 'vec3 barView(vec2 x){',
 ' float d=sdBar(x);vec3 col=bg(x);',
 ' if(d>0.){float sh=1.-clamp(d/(26.*u_s),0.,1.);col*=1.-0.26*sh*sh;}',
@@ -54,12 +54,12 @@ gl.useProgram(pr);
 var buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
 gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
 gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
-var U={};['u_res','u_tex','u_a','u_b','u_s'].forEach(function(n){U[n]=gl.getUniformLocation(pr,n);});
+var U={};['u_res','u_texSize','u_tex','u_a','u_b','u_s'].forEach(function(n){U[n]=gl.getUniformLocation(pr,n);});
 
 var tex=gl.createTexture(),W=0,H=0,dpr=1,cssWidth=0,cssHeight=0;
 /* Reference painted pages replaced by real finance HTML. */
 var background=WebGLBackground(gl,tex,cv),cur=3;
-function site(dt){if(sel!==cur){cur=sel;WebGLFinance.navigate(sel);}background.draw(W,H);}
+function site(animating){if(sel!==cur){cur=sel;WebGLFinance.navigate(sel);}background.draw(W,H,animating);}
 function resize(){
  dpr=Math.min(window.devicePixelRatio||1,2);
  var cw=cv.clientWidth||window.innerWidth,ch=cv.clientHeight||window.innerHeight;
@@ -78,7 +78,15 @@ cv.addEventListener('webglcontextrestored',function(){location.reload();});
 /* ---- tab bar + jelly physics (CSS px) ---- */
 var bar=document.getElementById('bar'),btns=[].slice.call(bar.children);
 var sel=3,x=null,v=0,j=0,jv=0,dir=1,last=0;
-var lastReport=0;
+var lastReport=0,perfFrames=0,perfStart=0,perfWorst=0,perfSlow=0,benchmark=null;
+if(new URLSearchParams(location.search).has('perf')){
+ var perfPanel=document.createElement('button');perfPanel.id='glassPerformance';perfPanel.textContent='Перевірити плавність (8 с)';
+ perfPanel.style.cssText='position:fixed;top:90px;right:8px;z-index:1000;background:#18181d;color:white;padding:12px;border:1px solid #555;border-radius:12px';document.body.appendChild(perfPanel);
+ perfPanel.addEventListener('click',function(){
+  if(benchmark)return;benchmark={start:performance.now(),frames:0,worst:0,slow:0,captures:background.stats.captures};perfPanel.textContent='Перевірка…';
+  var count=0,timer=setInterval(function(){sel=[0,3,2,1][count++%4];setOn(sel);if(count===32){clearInterval(timer);var b=benchmark;benchmark=null;perfPanel.textContent=Math.round(b.frames*1000/(performance.now()-b.start))+' FPS · max '+b.worst.toFixed(1)+' ms · затримки '+b.slow+' · знімки '+(background.stats.captures-b.captures);perfPanel.dataset.result=perfPanel.textContent;}},250);
+ });
+}
 var K=160,D=15,KJ=300,DJ=12,GJ=0.002;
 function cells(){var r=bar.getBoundingClientRect(),pad=6,cw=(r.width-2*pad)/5;
  return{r:r,cw:cw,cx:function(i){return r.left+pad+cw*(i+.5);}};}
@@ -118,18 +126,22 @@ function step(h,target){
 }
 function frame(t){
  requestAnimationFrame(frame);if(lost||!W||document.hidden)return;
+ if(last){var gap=t-last;perfWorst=Math.max(perfWorst,gap);if(gap>34)perfSlow++;if(benchmark){benchmark.frames++;benchmark.worst=Math.max(benchmark.worst,gap);if(gap>34)benchmark.slow++;}}
+ perfFrames++;if(!perfStart)perfStart=t;
+ if(t-perfStart>=1000){cv.dataset.fps=String(Math.round(perfFrames*1000/(t-perfStart)));cv.dataset.worstFrameMs=perfWorst.toFixed(1);cv.dataset.slowFrames=String(perfSlow);perfFrames=0;perfStart=t;perfWorst=0;perfSlow=0;}
  if(cv.clientWidth!==cssWidth||cv.clientHeight!==cssHeight)resize();
  if(document.body.classList.contains('sheet-open')||document.body.classList.contains('keyboard-open')){last=t;return;}
  var dt=Math.min(Math.max((t-last)/1000,0),1/30);last=t;
- site(dt);
  var c=cells(),target=drag?dragTarget:c.cx(sel);
  if(x===null)x=target;
  if(drag&&Math.abs(v)>5)dir=v>=0?1:-1;
  var n=3;for(var i=0;i<n;i++)step(dt/n,target);
  if(Math.abs(target-x)<0.05&&Math.abs(v)<0.5&&Math.abs(j)<0.002&&Math.abs(jv)<0.05){x=target;v=0;j=0;jv=0;}
+ site(!!drag||Math.abs(target-x)>.1||Math.abs(v)>.5||Math.abs(jv)>.05);
  var e=Math.max(-0.25,Math.min(0.7,j+Math.abs(v)*0.00015));
  var r=c.r,sc=W/cv.clientWidth,cy=(r.top+r.height/2)*sc;
  var hw=(c.cw/2+4)*(1+e),hh=(r.height/2+5)/(1+e*0.7);
+ var textureSize=background.textureSize();gl.uniform2f(U.u_texSize,textureSize[0],textureSize[1]);
  gl.uniform2f(U.u_res,W,H);gl.uniform1i(U.u_tex,0);gl.uniform1f(U.u_s,sc);
  gl.uniform4f(U.u_a,(r.left+r.width/2)*sc,cy,r.width/2*sc,r.height/2*sc);
  gl.uniform4f(U.u_b,x*sc,cy,hw*sc,hh*sc);

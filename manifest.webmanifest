@@ -1,7 +1,7 @@
 {
   "name": "WebGL Glass Bar",
   "short_name": "WebGL Glass",
-  "start_url": "./?v=1",
+  "start_url": "./?v=2",
   "id": "./",
   "scope": "./",
   "display": "standalone",
