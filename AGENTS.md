@@ -1,5 +1,12 @@
 # AGENTS.md
 
+## Active project boundary
+This independent copy is **WebGL Glass Bar**, repository `dimasdont-lab/WEBGL_glass_bar`.
+Work only in `M:\VoiceFinance\WebGL Glass Bar`. Do not edit or push the main Voice Finance or Test Liquid Glass projects.
+The initial full main-project copy is preserved in commit `24d7ebe`.
+Current task: remove the legacy dock and its rendering/interaction code, keep all finance pages, and implement the dock from `https://claude.ai/artifact/U8mAco7sLPvSbBfHh3Xgoq` after obtaining its source. Do not substitute a different example silently.
+Older handoff documents describe the copied application's background; their deployment destinations and previous tasks are superseded by this project boundary and the current user request.
+
 ## Project
 Voice Finance Free — mobile-first finance PWA.
 
@@ -16,7 +23,7 @@ Do not add paid runtime services or APIs. The app must remain usable without per
 7. Test before claiming a flow works.
 
 ## Git
-Repository: `dimasdont-lab/voice-finance-free`
+Repository: `dimasdont-lab/WEBGL_glass_bar`
 
 Make focused commits with descriptive messages.
 Before pushing, verify the app locally.
